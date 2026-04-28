@@ -17,7 +17,7 @@ interface DownloadModalProps {
 export function DownloadModal({ isOpen, onClose, videoUrl }: DownloadModalProps) {
   const [format, setFormat] = useState('mp4')
   const [quality, setQuality] = useState('720p')
-  const [isLoading, _setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [videoInfo, setVideoInfo] = useState<{ title: string, thumbnail: string } | null>(null)
 
   // fetching video info when modal opens
