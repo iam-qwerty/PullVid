@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
+import { getVideoInfo, getDownloadURL, type VideoFormat, type VideoQuality } from '@/app/api-client'
 // import Image from 'next/image'
 
 interface DownloadModalProps {
@@ -19,41 +20,25 @@ export function DownloadModal({ isOpen, onClose, videoUrl }: DownloadModalProps)
   const [isLoading, setIsLoading] = useState(false)
   const [videoInfo, setVideoInfo] = useState<{ title: string, thumbnail: string } | null>(null)
 
-  // Fetch video info when modal opens
+  // fetching video info when modal opens
   useEffect(() => {
     if (isOpen && videoUrl) {
-      fetch('/api/video-info', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: videoUrl }),
-      })
-        .then(res => res.json())
+      getVideoInfo(videoUrl)
         .then(data => setVideoInfo(data))
-        .catch(console.error);
+        .catch(console.error)
     }
-  }, [isOpen, videoUrl]);
+  }, [isOpen, videoUrl])
 
+  // trigger download
   const handleDownload = () => {
-    try {
-      setIsLoading(true);
-      
-      // Create the download URL with a temporary token or session ID if needed
-      const downloadUrl = `/api/download?${new URLSearchParams({
-        url: videoUrl,
-        format,
-        quality: quality.replace('p', ''),
-      })}`;
-
-      // Use window.location.href for direct download
-      window.location.href = downloadUrl;
-
-    } catch (error) {
-      console.error('Download failed:', error);
-    } finally {
-      setIsLoading(false);
-      onClose();
-    }
-  };
+    const url = getDownloadURL(
+      videoUrl,
+      format as VideoFormat,
+      quality.replace('p', '') as VideoQuality
+    )
+    window.location.href = url
+    onClose()
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -61,11 +46,11 @@ export function DownloadModal({ isOpen, onClose, videoUrl }: DownloadModalProps)
         <DialogHeader>
           <DialogTitle>Download Options</DialogTitle>
         </DialogHeader>
-        
+
         {videoInfo && (
           <div className="flex flex-col items-center gap-4">
-            <img 
-              src={videoInfo.thumbnail} 
+            <img
+              src={videoInfo.thumbnail}
               alt={videoInfo.title}
               width={400}
               height={225}
