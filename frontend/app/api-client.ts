@@ -63,7 +63,7 @@ export async function downloadVideoBlob(
   }
 
   const reader = response.body.getReader();
-  const chunks: Uint8Array<ArrayBuffer>[] = [];
+  const chunks: Uint8Array[] = [];
   let loaded = 0;
 
   while (true) {
