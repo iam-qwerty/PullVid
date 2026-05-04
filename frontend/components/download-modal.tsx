@@ -6,7 +6,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { getVideoInfo, getDownloadURL, type VideoFormat, type VideoQuality } from '@/app/api-client'
-// import Image from 'next/image'
+import Image from 'next/image'
 
 interface DownloadModalProps {
   isOpen: boolean
@@ -31,13 +31,17 @@ export function DownloadModal({ isOpen, onClose, videoUrl }: DownloadModalProps)
 
   // trigger download
   const handleDownload = () => {
+    setIsLoading(true)
     const url = getDownloadURL(
       videoUrl,
       format as VideoFormat,
       quality.replace('p', '') as VideoQuality
     )
     window.location.href = url
-    onClose()
+    setTimeout(() => {
+      setIsLoading(false)
+      onClose()
+    }, 1000)
   }
 
   return (
@@ -49,12 +53,13 @@ export function DownloadModal({ isOpen, onClose, videoUrl }: DownloadModalProps)
 
         {videoInfo && (
           <div className="flex flex-col items-center gap-4">
-            <img
+            <Image
               src={videoInfo.thumbnail}
               alt={videoInfo.title}
               width={400}
               height={225}
               className="w-full rounded-lg object-cover"
+              unoptimized
             />
             <h3 className="text-sm font-medium text-center">{videoInfo.title}</h3>
           </div>

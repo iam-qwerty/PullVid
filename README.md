@@ -25,5 +25,5 @@ In local development, the frontend proxies `/video-info` and `/download` to the 
 
 ## Deployment shape
 
-- `pullvid.com` -> Vercel project from `frontend/`
-- `api.pullvid.com` -> Go server from `backend/`
+- `pullvid.vercel.app` -> Vercel project from `frontend/`
+- `[IP_ADDRESS]` -> Go server from `backend/`
